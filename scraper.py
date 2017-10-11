@@ -2,6 +2,7 @@
 
 import json
 import requests
+import time
 
 from bs4 import BeautifulSoup
 from instagram_scraper import InstagramScraper
@@ -23,7 +24,8 @@ class Scraper:
                      'im_width', 
                      'n_comments', 
                      'n_likes', 
-                     'timestamp', 
+                     'timestamp_media', 
+                     'timestamp_db',
                      'is_ad',
                      'shortcode')
     COLUMNS_USERS = ('id', 
@@ -35,7 +37,8 @@ class Scraper:
                      'external_url',
                      'fb_page',
                      'is_verified',
-                     'profile_pic_url')
+                     'profile_pic_url',
+                     'timestamp_db')
     HEADERS = {'user-agent': 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)'}
 
 
@@ -120,30 +123,12 @@ class Scraper:
                 print i_media, '/', len(media_list)
                 try:
                     # Get metadata
-                    print "Get metadata"
                     metadata = self.get_metadata(media)
                     # Update media and users DataFrame
-                    print "Update media DF"
                     self._update_media_df(metadata)
-                    print "Update users DF"
                     self._update_user_df(metadata)
                 except Exception, e:
                     print e
-
-
-    # def update_db(self, index_media=-100):
-    #     """
-    #     """
-    #     df_media = self.df_media.iloc[index_media:, :].copy()
-    #     for media in df_media:
-    #         try:
-    #             metadata_shortcode = \
-    #               self._get_metadata_from_shortcode(media['shortcode'])
-
-    #             self._update_media_df(metadata_shortcode)
-    #             self._update_user_df(metadata_shortcode)
-    #         except Exception, e:
-    #             print e
 
 
     def get_media_metadata_by_hashtag_api(self, hashtag='food', reset_ec=True):
@@ -204,7 +189,7 @@ class Scraper:
                            'n_likes': n_likes,
                            'text': text,
                            'n_comments': n_comments,
-                           'timestamp': timestamp,
+                           'timestamp_media': timestamp,
                            'id_user': id_user}
                     media_list.append(row)
         return media_list
@@ -380,6 +365,8 @@ class Scraper:
         Returns:
             None
         """
+        # Get current time
+        current_time = str(int(time.time()))
         # Check if media is contained in DataFrame
         id_media = metadata['id_media']
         if id_media not in self.df_media['id'].values:  # not contained => create new
@@ -394,7 +381,8 @@ class Scraper:
                     metadata['im_dim_w'],
                     metadata['n_comments'],
                     metadata['n_likes'],
-                    metadata['timestamp'],
+                    metadata['timestamp_media'],
+                    current_time,
                     metadata['is_ad'],
                     metadata['shortcode_media']]
             # Convert item to DataFrame
@@ -407,6 +395,8 @@ class Scraper:
               metadata['n_comments']
             self.df_media[self.df_media['id'] == id_media]['n_likes'] = \
               metadata['n_likes']
+            self.df_media[self.df_media['id'] == id_media]['timestamp_db'] = \
+              dtz_string
 
 
     def _update_user_df(self, metadata):
@@ -419,6 +409,8 @@ class Scraper:
         Returns:
             None
         """
+        # Get current time
+        current_time = str(int(time.time()))
         # Check if user is contained in DataFrame
         id_user = metadata['id_user']
         if id_user not in self.df_users['id'].values:
@@ -432,7 +424,8 @@ class Scraper:
                     metadata['external_url'],
                     metadata['fb_page'],
                     metadata['user_is_verified'],
-                    metadata['user_profile_pic_url']]
+                    metadata['user_profile_pic_url'],
+                    current_time]
             # Convert item to DataFrame
             df_item = pd.DataFrame(data=[item], columns=self.COLUMNS_USERS)
             # Add item to DataFrame
@@ -443,3 +436,5 @@ class Scraper:
               metadata['n_followers']
             self.df_users[self.df_users['id'] == id_user]['n_follows'] = \
               metadata['n_follows']
+            self.df_users[self.df_users['id'] == id_user]['timestamp_db'] = \
+              dtz_string
