@@ -371,7 +371,7 @@ class Scraper:
         # Check if media is contained in DataFrame
         id_media = metadata['id_media']
         # Check media ID
-        if len(str(id_media)) > 0 and id_media.is_decimal():
+        if len(str(id_media)) > 0 and id_media.isdecimal():
             if id_media not in self.df_media['id'].values:  # not contained => create new
                 # Create new item
                 item = [id_media,
