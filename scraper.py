@@ -1,6 +1,7 @@
 # -*- codiong: utf-8 -*-
 
 import json
+import os
 import requests
 import time
 
@@ -70,16 +71,16 @@ class Scraper:
             idx_first (int): index required by hashtag-based search query
         """
         # Check databases
-        if path_df_media is None:
-            self.df_media = pd.DataFrame(columns=self.COLUMNS_MEDIA)
-        else:
+        self.df_media = pd.DataFrame(columns=self.COLUMNS_MEDIA)
+        if path_df_media is not None:
             self.path_df_media = path_df_media
-            self.df_media = pd.read_csv(path_df_media, delimiter='\t')
-        if path_df_users is None:
-            self.df_users = pd.DataFrame(columns=self.COLUMNS_USERS)
-        else:
+            if os.path.isfile(path_df_media):
+                self.df_media = pd.read_csv(path_df_media, delimiter='\t')
+        self.df_users = pd.DataFrame(columns=self.COLUMNS_USERS)
+        if path_df_users is not None:
             self.path_df_users = path_df_users
-            self.df_users = pd.read_csv(path_df_users, delimiter='\t')
+            if os.path.isfile(path_df_users):
+                self.df_users = pd.read_csv(path_df_users, delimiter='\t')
         
         # Sessions
         self.session_hashtag_api = requests.Session()
@@ -120,7 +121,7 @@ class Scraper:
             # Process each media item
             print "Process each item"
             for (i_media, media) in enumerate(media_list):
-                print i_media, '/', len(media_list)
+                print '\r', str(i_media), ' / ', str(len(media_list)),
                 try:
                     # Get metadata
                     metadata = self.get_metadata(media)
@@ -229,10 +230,10 @@ class Scraper:
         """
         # Media
         if self.path_df_media is not None and len(self.path_df_media) > 0:
-            self.df_media.to_csv(self.path_df_media, sep='\t')
+            self.df_media.to_csv(self.path_df_media, sep='\t', index=False)
         # Users
         if self.path_df_users is not None and len(self.path_df_users) > 0:
-            self.df_users.to_csv(self.path_df_users, sep='\t')
+            self.df_users.to_csv(self.path_df_users, sep='\t', index=False)
 
 
     # ----- Private Functions ----- #
@@ -396,7 +397,7 @@ class Scraper:
             self.df_media[self.df_media['id'] == id_media]['n_likes'] = \
               metadata['n_likes']
             self.df_media[self.df_media['id'] == id_media]['timestamp_db'] = \
-              dtz_string
+              current_time
 
 
     def _update_user_df(self, metadata):
@@ -437,4 +438,4 @@ class Scraper:
             self.df_users[self.df_users['id'] == id_user]['n_follows'] = \
               metadata['n_follows']
             self.df_users[self.df_users['id'] == id_user]['timestamp_db'] = \
-              dtz_string
+              current_time
