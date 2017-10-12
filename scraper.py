@@ -370,27 +370,29 @@ class Scraper:
         current_time = str(int(time.time()))
         # Check if media is contained in DataFrame
         id_media = metadata['id_media']
-        if id_media not in self.df_media['id'].values:  # not contained => create new
-            # Create new item
-            item = [id_media,
-                    metadata['id_user'],
-                    metadata['location'],
-                    metadata['text'],
-                    metadata['im_url'],
-                    metadata['im_thumbnail_url'],
-                    metadata['im_dim_h'],
-                    metadata['im_dim_w'],
-                    metadata['n_comments'],
-                    metadata['n_likes'],
-                    metadata['timestamp_media'],
-                    current_time,
-                    metadata['is_ad'],
-                    metadata['shortcode_media']]
-            # Convert item to DataFrame
-            df_item = pd.DataFrame(data=[item], columns=self.COLUMNS_MEDIA)
-            # Add item to DataFrame
-            self.df_media = pd.concat([self.df_media, df_item], 
-                                      ignore_index=True)
+        # Check media ID
+        if len(str(id_media)) > 0 and id_media.is_decimal():
+            if id_media not in self.df_media['id'].values:  # not contained => create new
+                # Create new item
+                item = [id_media,
+                        metadata['id_user'],
+                        metadata['location'],
+                        metadata['text'],
+                        metadata['im_url'],
+                        metadata['im_thumbnail_url'],
+                        metadata['im_dim_h'],
+                        metadata['im_dim_w'],
+                        metadata['n_comments'],
+                        metadata['n_likes'],
+                        metadata['timestamp_media'],
+                        current_time,
+                        metadata['is_ad'],
+                        metadata['shortcode_media']]
+                # Convert item to DataFrame
+                df_item = pd.DataFrame(data=[item], columns=self.COLUMNS_MEDIA)
+                # Add item to DataFrame
+                self.df_media = pd.concat([self.df_media, df_item], 
+                                          ignore_index=True)
         else:  # contained => update
             self.df_media[self.df_media['id'] == id_media]['n_comments'] = \
               metadata['n_comments']
