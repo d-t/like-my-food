@@ -393,13 +393,13 @@ class Scraper:
                 # Add item to DataFrame
                 self.df_media = pd.concat([self.df_media, df_item], 
                                           ignore_index=True)
-        else:  # contained => update
-            self.df_media[self.df_media['id'] == id_media]['n_comments'] = \
-              metadata['n_comments']
-            self.df_media[self.df_media['id'] == id_media]['n_likes'] = \
-              metadata['n_likes']
-            self.df_media[self.df_media['id'] == id_media]['timestamp_db'] = \
-              current_time
+            else:  # contained => update
+                self.df_media[self.df_media['id'] == id_media]['n_comments'] = \
+                  metadata['n_comments']
+                self.df_media[self.df_media['id'] == id_media]['n_likes'] = \
+                  metadata['n_likes']
+                self.df_media[self.df_media['id'] == id_media]['timestamp_db'] = \
+                  current_time
 
 
     def _update_user_df(self, metadata):
