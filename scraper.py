@@ -97,8 +97,7 @@ class Scraper:
     # ----- Public Functions ----- #
 
     def insert_in_db(self, hashtag='food', n_iterations=10):
-        """
-        Update database containing information related to new media and users.
+        """Update database containing information related to new media and users.
 
         Args:
             hashtag (str): search hashtag
@@ -133,8 +132,7 @@ class Scraper:
 
 
     def get_media_metadata_by_hashtag_api(self, hashtag='food', reset_ec=True):
-        """
-        Get list of media information associated to input hashtag.
+        """Get list of media information associated to input hashtag.
 
         Args:
             hashtag (str): search keyword
@@ -197,8 +195,7 @@ class Scraper:
 
 
     def get_metadata(self, media):
-        """
-        Given media metadata, obtain the Web metadata using the function
+        """Given media metadata, obtain the Web metadata using the function
         _get_metadata_from_shortcode and merge all information.
 
         Args:
@@ -219,8 +216,7 @@ class Scraper:
 
 
     def write_db_on_file(self):
-        """
-        Write database on files.
+        """Write database on files.
 
         Args:
             None
@@ -239,8 +235,7 @@ class Scraper:
     # ----- Private Functions ----- #
 
     def _get_metadata_from_shortcode(self, shortcode):
-        """
-        Get metadata from Web page, accessed using the media shortcode.
+        """Get metadata from Web page, accessed using the media shortcode.
 
         Args:
             shortcode (str): media shortcode
@@ -270,8 +265,7 @@ class Scraper:
 
 
     def _get_json_from_url(self, url):
-        """
-        Return JSON contained in Web page.
+        """Return JSON contained in Web page.
 
         Args:
             url (str): URL
@@ -298,8 +292,7 @@ class Scraper:
 
 
     def _get_data_from_media_json(self, curr_json):
-        """
-        Given the JSON of a single media item, select relevant information.
+        """Given the JSON of a single media item, select relevant information.
 
         Args:
             curr_json (dict): media JSON
@@ -328,8 +321,7 @@ class Scraper:
 
 
     def _get_data_from_user_json(self, curr_json):
-        """
-        Given the JSON of a single user, select relevant information.
+        """Given the JSON of a single user, select relevant information.
 
         Args:
             curr_json (dict): user JSON
@@ -356,8 +348,7 @@ class Scraper:
 
 
     def _update_media_df(self, metadata):
-        """
-        Given metadata associated to a media item, append it to the media 
+        """Given metadata associated to a media item, append it to the media 
         DataFrame.
 
         Args:
